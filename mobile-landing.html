@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Landing Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mobile-screen {
+            width: 375px;
+            height: 667px;
+            background: #000;
+            border-radius: 25px;
+            border: 8px solid #2c3e50;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-bar {
+            height: 24px;
+            background: rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .time {
+            font-weight: 600;
+        }
+
+        .battery {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .home-screen {
+            padding: 40px 30px;
+            height: calc(100% - 24px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .date-time {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .date {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .clock {
+            font-size: 48px;
+            font-weight: 300;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            flex-grow: 1;
+            align-content: center;
+        }
+
+        .app-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+
+        .app-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .icon-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%);
+        }
+
+        .app-name {
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .google { background: linear-gradient(135deg, #4285F4, #34A853); }
+        .youtube { background: linear-gradient(135deg, #FF0000, #CC0000); }
+        .instagram { background: linear-gradient(135deg, #E4405F, #FCCC63, #833AB4); }
+        .facebook { background: linear-gradient(135deg, #1877F2, #42A5F5); }
+        .whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); }
+        .gallery { background: linear-gradient(135deg, #FF6B6B, #4ECDC4); }
+
+        .home-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 135px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 400px) {
+            .mobile-screen {
+                width: 95vw;
+                height: 95vh;
+                max-width: 375px;
+                max-height: 667px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-screen">
+        <div class="status-bar">
+            <span class="time" id="current-time">9:41</span>
+            <div class="battery">
+                <span>📶</span>
+                <span>🔋</span>
+                <span>100%</span>
+            </div>
+        </div>
+
+        <div class="home-screen">
+            <div class="date-time">
+                <div class="date" id="current-date">Tuesday, November 26</div>
+                <div class="clock" id="current-clock">9:41</div>
+            </div>
+
+            <div class="apps-grid">
+                <a href="https://google.com" class="app-icon" target="_blank">
+                    <div class="icon-circle google">
+                        <img src="assests/gllogo.png" alt="Google Logo" style="width: 70px; height: 70px; border-radius: 8px;">
+                    </div>
+                    <span class="app-name">Google</span>
+                </a>
+
+                <a href="http://localhost:3000/youtube" class="app-icon" target="_blank">
+                    <div class="icon-circle youtube">
+                        <img src="assests/Youtubelogo.png" alt="YouTube Logo" style="width: 70px; height: 70px; border-radius: 8px;">
+                    </div>
+                    <span class="app-name">YouTube</span>
+                </a>
+
+                <a href="http://localhost:3000/instagram" class="app-icon" target="_blank">
+                    <div class="icon-circle instagram">
+                        <img src="assests/instalogo.jpeg" alt="Instagram Logo" style="width: 70px; height: 70px; border-radius: 8px;">
+                    </div>
+                    <span class="app-name">Instagram</span>
+                </a>
+
+                <a href="https://facebook.com" class="app-icon" target="_blank">
+                    <div class="icon-circle facebook">
+                        <img src="assests/fblogo.png" alt="Facebook Logo" style="width: 70px; height: 70px; border-radius: 10px;">
+                    </div>
+                    <span class="app-name">Facebook</span>
+                </a>
+
+                <a href="https://web.whatsapp.com" class="app-icon" target="_blank">
+                    <div class="icon-circle whatsapp">
+                        <img src="assests/wtlogo.png" alt="WhatsApp Logo" style="width: 70px; height: 70px; border-radius: 8px;">
+                    </div>
+                    <span class="app-name">WhatsApp</span>
+                </a>
+
+                <a href="#" class="app-icon" onclick="openGallery()">
+                    <div class="icon-circle gallery">
+                        <img src="assests/gallerylogo.png" alt="Gallery Logo" style="width: 70px; height: 70px; border-radius: 8px;">
+                    </div>
+                    <span class="app-name">Gallery</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="home-indicator"></div>
+    </div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+            const dateString = now.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+
+            document.getElementById('current-time').textContent = timeString;
+            document.getElementById('current-clock').textContent = timeString;
+            document.getElementById('current-date').textContent = dateString;
+        }
+
+        function openGallery() {
+            alert('Gallery app would open here!\n\nIn a real mobile app, this would open the device\'s photo gallery.');
+        }
+
+        // Update time immediately and then every minute
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // Add some interactive effects
+        document.querySelectorAll('.app-icon').forEach(icon => {
+            icon.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.95)';
+            });
+            
+            icon.addEventListener('touchend', function() {
+                this.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
