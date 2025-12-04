@@ -1,0 +1,327 @@
+{
+  "timeSeriesData": [
+    {
+      "date": "2025-11-01",
+      "impressions": 12500,
+      "clicks": 875,
+      "conversions": 38,
+      "spend": 245.50,
+      "revenue": 1827.60
+    },
+    {
+      "date": "2025-11-02",
+      "impressions": 13200,
+      "clicks": 924,
+      "conversions": 42,
+      "spend": 268.20,
+      "revenue": 2016.80
+    },
+    {
+      "date": "2025-11-03",
+      "impressions": 11800,
+      "clicks": 826,
+      "conversions": 35,
+      "spend": 228.40,
+      "revenue": 1680.00
+    },
+    {
+      "date": "2025-11-04",
+      "impressions": 14500,
+      "clicks": 1015,
+      "conversions": 48,
+      "spend": 289.50,
+      "revenue": 2304.00
+    },
+    {
+      "date": "2025-11-05",
+      "impressions": 15200,
+      "clicks": 1064,
+      "conversions": 52,
+      "spend": 312.80,
+      "revenue": 2496.00
+    },
+    {
+      "date": "2025-11-06",
+      "impressions": 13800,
+      "clicks": 966,
+      "conversions": 45,
+      "spend": 278.20,
+      "revenue": 2160.00
+    },
+    {
+      "date": "2025-11-07",
+      "impressions": 16500,
+      "clicks": 1155,
+      "conversions": 58,
+      "spend": 341.00,
+      "revenue": 2784.00
+    },
+    {
+      "date": "2025-11-08",
+      "impressions": 14200,
+      "clicks": 994,
+      "conversions": 48,
+      "spend": 295.60,
+      "revenue": 2304.00
+    },
+    {
+      "date": "2025-11-09",
+      "impressions": 15800,
+      "clicks": 1106,
+      "conversions": 54,
+      "spend": 325.40,
+      "revenue": 2592.00
+    },
+    {
+      "date": "2025-11-10",
+      "impressions": 17200,
+      "clicks": 1204,
+      "conversions": 62,
+      "spend": 356.80,
+      "revenue": 2976.00
+    },
+    {
+      "date": "2025-11-11",
+      "impressions": 18500,
+      "clicks": 1295,
+      "conversions": 68,
+      "spend": 385.00,
+      "revenue": 3264.00
+    },
+    {
+      "date": "2025-11-12",
+      "impressions": 16800,
+      "clicks": 1176,
+      "conversions": 58,
+      "spend": 348.20,
+      "revenue": 2784.00
+    },
+    {
+      "date": "2025-11-13",
+      "impressions": 19200,
+      "clicks": 1344,
+      "conversions": 72,
+      "spend": 398.40,
+      "revenue": 3456.00
+    },
+    {
+      "date": "2025-11-14",
+      "impressions": 17500,
+      "clicks": 1225,
+      "conversions": 62,
+      "spend": 363.00,
+      "revenue": 2976.00
+    },
+    {
+      "date": "2025-11-15",
+      "impressions": 20100,
+      "clicks": 1407,
+      "conversions": 78,
+      "spend": 417.80,
+      "revenue": 3744.00
+    },
+    {
+      "date": "2025-11-16",
+      "impressions": 18900,
+      "clicks": 1323,
+      "conversions": 68,
+      "spend": 392.60,
+      "revenue": 3264.00
+    },
+    {
+      "date": "2025-11-17",
+      "impressions": 21500,
+      "clicks": 1505,
+      "conversions": 82,
+      "spend": 446.50,
+      "revenue": 3936.00
+    },
+    {
+      "date": "2025-11-18",
+      "impressions": 19800,
+      "clicks": 1386,
+      "conversions": 72,
+      "spend": 411.20,
+      "revenue": 3456.00
+    },
+    {
+      "date": "2025-11-19",
+      "impressions": 22300,
+      "clicks": 1561,
+      "conversions": 88,
+      "spend": 463.40,
+      "revenue": 4224.00
+    },
+    {
+      "date": "2025-11-20",
+      "impressions": 20500,
+      "clicks": 1435,
+      "conversions": 76,
+      "spend": 426.00,
+      "revenue": 3648.00
+    },
+    {
+      "date": "2025-11-21",
+      "impressions": 23800,
+      "clicks": 1666,
+      "conversions": 95,
+      "spend": 494.60,
+      "revenue": 4560.00
+    },
+    {
+      "date": "2025-11-22",
+      "impressions": 22100,
+      "clicks": 1547,
+      "conversions": 84,
+      "spend": 459.20,
+      "revenue": 4032.00
+    },
+    {
+      "date": "2025-11-23",
+      "impressions": 24500,
+      "clicks": 1715,
+      "conversions": 98,
+      "spend": 509.00,
+      "revenue": 4704.00
+    },
+    {
+      "date": "2025-11-24",
+      "impressions": 26200,
+      "clicks": 1834,
+      "conversions": 105,
+      "spend": 544.20,
+      "revenue": 5040.00
+    },
+    {
+      "date": "2025-11-25",
+      "impressions": 25800,
+      "clicks": 1806,
+      "conversions": 102,
+      "spend": 536.80,
+      "revenue": 4896.00
+    },
+    {
+      "date": "2025-11-26",
+      "impressions": 27500,
+      "clicks": 1925,
+      "conversions": 112,
+      "spend": 571.50,
+      "revenue": 5376.00
+    },
+    {
+      "date": "2025-11-27",
+      "impressions": 28900,
+      "clicks": 2023,
+      "conversions": 118,
+      "spend": 600.60,
+      "revenue": 5664.00
+    }
+  ],
+  "demographics": {
+    "age": [
+      { "range": "18-24", "percentage": 15, "conversions": 120 },
+      { "range": "25-34", "percentage": 35, "conversions": 280 },
+      { "range": "35-44", "percentage": 28, "conversions": 224 },
+      { "range": "45-54", "percentage": 15, "conversions": 120 },
+      { "range": "55+", "percentage": 7, "conversions": 58 }
+    ],
+    "gender": [
+      { "type": "Male", "percentage": 52, "conversions": 416 },
+      { "type": "Female", "percentage": 45, "conversions": 360 },
+      { "type": "Other", "percentage": 3, "conversions": 26 }
+    ],
+    "location": [
+      { "country": "United States", "percentage": 45, "conversions": 361 },
+      { "country": "United Kingdom", "percentage": 18, "conversions": 144 },
+      { "country": "Canada", "percentage": 12, "conversions": 96 },
+      { "country": "Australia", "percentage": 10, "conversions": 80 },
+      { "country": "Germany", "percentage": 8, "conversions": 64 },
+      { "country": "Other", "percentage": 7, "conversions": 57 }
+    ]
+  },
+  "platformPerformance": [
+    {
+      "platform": "Facebook",
+      "impressions": 145000,
+      "clicks": 10150,
+      "conversions": 425,
+      "ctr": 7.0,
+      "spend": 3750.50,
+      "revenue": 20400.00,
+      "roas": 5.44
+    },
+    {
+      "platform": "Google Ads",
+      "impressions": 98000,
+      "clicks": 5880,
+      "conversions": 285,
+      "ctr": 6.0,
+      "spend": 4762.80,
+      "revenue": 13680.00,
+      "roas": 2.87
+    },
+    {
+      "platform": "Instagram",
+      "impressions": 112000,
+      "clicks": 8512,
+      "conversions": 368,
+      "ctr": 7.6,
+      "spend": 2213.12,
+      "revenue": 17664.00,
+      "roas": 7.98
+    },
+    {
+      "platform": "LinkedIn",
+      "impressions": 52000,
+      "clicks": 3120,
+      "conversions": 142,
+      "ctr": 6.0,
+      "spend": 6708.00,
+      "revenue": 6816.00,
+      "roas": 1.02
+    }
+  ],
+  "deviceBreakdown": [
+    { "device": "Mobile", "percentage": 58, "conversions": 465 },
+    { "device": "Desktop", "percentage": 32, "conversions": 257 },
+    { "device": "Tablet", "percentage": 10, "conversions": 80 }
+  ],
+  "topPerformingAds": [
+    {
+      "id": "ad-001",
+      "name": "Summer Sale Hero Banner",
+      "campaign": "Summer Sale 2025",
+      "impressions": 45000,
+      "clicks": 3600,
+      "conversions": 152,
+      "ctr": 8.0,
+      "conversionRate": 4.22,
+      "spend": 936.00,
+      "revenue": 7296.00
+    },
+    {
+      "id": "ad-002",
+      "name": "Smart Watch Launch Video",
+      "campaign": "Product Launch - Smart Watch",
+      "impressions": 38000,
+      "clicks": 2660,
+      "conversions": 128,
+      "ctr": 7.0,
+      "conversionRate": 4.81,
+      "spend": 2153.60,
+      "revenue": 6144.00
+    },
+    {
+      "id": "ad-003",
+      "name": "Holiday Gift Guide Carousel",
+      "campaign": "Holiday Special Campaign",
+      "impressions": 52000,
+      "clicks": 4160,
+      "conversions": 185,
+      "ctr": 8.0,
+      "conversionRate": 4.45,
+      "spend": 1081.60,
+      "revenue": 8880.00
+    }
+  ]
+}

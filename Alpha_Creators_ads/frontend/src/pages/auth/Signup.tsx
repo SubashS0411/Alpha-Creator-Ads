@@ -3,201 +3,384 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sparkles, Mail, Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Sparkles, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import MultiStepProgressBar from "@/components/auth/MultiStepProgressBar";
+import PasswordStrengthMeter from "@/components/auth/PasswordStrengthMeter";
+import SocialLoginButtons from "@/components/auth/SocialLoginButtons";
+import signupBg from "@/assets/images/signup-bg.png";
+import authService from "@/services/authService";
 
 const Signup = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [step, setStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    // Step 1: Account
+    fullName: "",
     email: "",
     password: "",
-    role: "",
-    company: "",
+    confirmPassword: "",
     agreeToTerms: false,
-    agreeToPrivacy: false
+
+    // Step 2: Business
+    companyName: "",
+    companySize: "",
+    industry: "",
+    monthlyAdSpend: "",
+
+    // Step 3: Integration
+    integrations: [] as string[]
   });
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    // In a real app, this would create account via backend
-    window.location.href = "/onboarding/profile-setup";
+  const updateFormData = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleNext = () => {
+    if (step === 1) {
+      if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
+        toast({ title: "Missing Fields", description: "Please fill in all required fields.", variant: "destructive" });
+        return;
+      }
+      
+      // Validate password strength
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+      if (!passwordRegex.test(formData.password)) {
+        toast({ 
+          title: "Weak Password", 
+          description: "Password must be at least 8 characters and contain uppercase, lowercase, and numbers.", 
+          variant: "destructive" 
+        });
+        return;
+      }
+      
+      if (formData.password !== formData.confirmPassword) {
+        toast({ title: "Password Mismatch", description: "Passwords do not match.", variant: "destructive" });
+        return;
+      }
+      if (!formData.agreeToTerms) {
+        toast({ title: "Agreement Required", description: "Please agree to the Terms of Service.", variant: "destructive" });
+        return;
+      }
+    }
+
+    if (step === 2) {
+      if (!formData.companyName || !formData.companySize || !formData.industry) {
+        toast({ title: "Missing Fields", description: "Please tell us about your business.", variant: "destructive" });
+        return;
+      }
+    }
+
+    setStep(prev => prev + 1);
+  };
+
+  const handleBack = () => {
+    setStep(prev => prev - 1);
+  };
+
+  const handleSignup = async () => {
+    setIsLoading(true);
+    try {
+      // Split full name
+      const nameParts = formData.fullName.trim().split(' ');
+      const firstName = nameParts[0];
+      const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+      // Generate username from email (sanitize)
+      const emailPrefix = formData.email.split('@')[0];
+      const sanitizedPrefix = emailPrefix.replace(/[^a-zA-Z0-9_.]/g, '_');
+      const username = sanitizedPrefix + Math.floor(Math.random() * 1000);
+
+      await authService.register({
+        email: formData.email,
+        username,
+        password: formData.password,
+        firstName,
+        lastName,
+        companyName: formData.companyName,
+        companySize: formData.companySize,
+        industry: formData.industry,
+        monthlyAdSpend: formData.monthlyAdSpend,
+        integrations: formData.integrations
+      });
+
+      toast({
+        title: "Account Created!",
+        description: "Welcome to Next-Gen Target Marketing.",
+      });
+      navigate("/dashboard");
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      toast({
+        title: "Signup Failed",
+        description: error.message || "Failed to create account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const toggleIntegration = (platform: string) => {
+    setFormData(prev => {
+      const exists = prev.integrations.includes(platform);
+      return {
+        ...prev,
+        integrations: exists
+          ? prev.integrations.filter(p => p !== platform)
+          : [...prev.integrations, platform]
+      };
+    });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/10 p-4">
-      <Card className="w-full max-w-lg p-8 shadow-elevated bg-gradient-card border">
-        {/* Logo */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="p-2 rounded-lg bg-gradient-primary">
-            <Sparkles className="h-6 w-6 text-primary-foreground" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-background">
+      {/* Background with Overlay */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background/95 to-primary/10 z-10" />
+        <img src={signupBg} alt="Background" className="w-full h-full object-cover opacity-20" />
+      </div>
+
+      <Card className="w-full max-w-2xl p-8 shadow-2xl bg-card/80 backdrop-blur-xl border-white/10 relative z-20">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <div className="p-2 rounded-lg bg-primary/20 border border-primary/30">
+              <Sparkles className="h-6 w-6 text-primary" />
+            </div>
           </div>
-          <span className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">
-            Next Gen Target Marketing
-          </span>
+          <h1 className="text-3xl font-bold tracking-tight mb-2">Start Your Free 14-Day Trial</h1>
+          <p className="text-muted-foreground">
+            No credit card required • Cancel anytime • Full access to all features
+          </p>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSignup} className="space-y-6">
-          <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-center">Create Your Account</h1>
-            <p className="text-muted-foreground text-center">
-              Join thousands of marketers creating AI-powered advertisements
-            </p>
-          </div>
+        <MultiStepProgressBar
+          steps={["Account Details", "Business Info", "Integration Setup"]}
+          currentStep={step}
+        />
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                id="firstName"
-                placeholder="John"
-                value={formData.firstName}
-                onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                required
-              />
+        <div className="mt-8">
+          {/* Step 1: Account Details */}
+          {step === 1 && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name</Label>
+                  <Input
+                    id="fullName"
+                    placeholder="John Doe"
+                    value={formData.fullName}
+                    onChange={(e) => updateFormData("fullName", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Work Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="john@company.com"
+                    value={formData.email}
+                    onChange={(e) => updateFormData("email", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Create a strong password"
+                  value={formData.password}
+                  onChange={(e) => updateFormData("password", e.target.value)}
+                />
+                <PasswordStrengthMeter password={formData.password} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => updateFormData("confirmPassword", e.target.value)}
+                />
+              </div>
+
+              <div className="flex items-start space-x-2 pt-2">
+                <Checkbox
+                  id="terms"
+                  checked={formData.agreeToTerms}
+                  onCheckedChange={(checked) => updateFormData("agreeToTerms", checked)}
+                />
+                <Label htmlFor="terms" className="text-sm leading-relaxed font-normal text-muted-foreground">
+                  I agree to the <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+                </Label>
+              </div>
+
+              <div className="relative py-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">Or sign up with</span>
+                </div>
+              </div>
+
+              <SocialLoginButtons />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                id="lastName"
-                placeholder="Doe"
-                value={formData.lastName}
-                onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                required
-              />
+          )}
+
+          {/* Step 2: Business Info */}
+          {step === 2 && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="space-y-2">
+                <Label htmlFor="companyName">Company Name</Label>
+                <Input
+                  id="companyName"
+                  placeholder="Acme Inc."
+                  value={formData.companyName}
+                  onChange={(e) => updateFormData("companyName", e.target.value)}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Company Size</Label>
+                  <Select value={formData.companySize} onValueChange={(val) => updateFormData("companySize", val)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">Just me</SelectItem>
+                      <SelectItem value="2-10">2-10 employees</SelectItem>
+                      <SelectItem value="11-50">11-50 employees</SelectItem>
+                      <SelectItem value="51-200">51-200 employees</SelectItem>
+                      <SelectItem value="201+">201+ employees</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Industry</Label>
+                  <Select value={formData.industry} onValueChange={(val) => updateFormData("industry", val)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select industry" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ecommerce">E-commerce</SelectItem>
+                      <SelectItem value="b2b">B2B Services</SelectItem>
+                      <SelectItem value="healthcare">Healthcare</SelectItem>
+                      <SelectItem value="finance">Finance</SelectItem>
+                      <SelectItem value="education">Education</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Monthly Ad Spend</Label>
+                <Select value={formData.monthlyAdSpend} onValueChange={(val) => updateFormData("monthlyAdSpend", val)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select monthly spend" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="<1k">Less than $1,000</SelectItem>
+                    <SelectItem value="1k-5k">$1,000 - $5,000</SelectItem>
+                    <SelectItem value="5k-25k">$5,000 - $25,000</SelectItem>
+                    <SelectItem value="25k+">$25,000+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Work Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@company.com"
-              value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-              required
-            />
-          </div>
+          {/* Step 3: Integration Setup */}
+          {step === 3 && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-medium">Connect Your Marketing Channels</h3>
+                <p className="text-sm text-muted-foreground">Select the platforms you want to monitor and advertise on</p>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="role">Role</Label>
-            <Select value={formData.role} onValueChange={(value) => setFormData({...formData, role: value})}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select your role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="individual">Individual Marketer</SelectItem>
-                <SelectItem value="agency">Agency Team Member</SelectItem>
-                <SelectItem value="enterprise">Enterprise User</SelectItem>
-                <SelectItem value="freelancer">Freelancer</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {["Twitter", "Facebook", "Instagram", "LinkedIn", "Google Ads", "TikTok"].map((platform) => (
+                  <div
+                    key={platform}
+                    className={`
+                      cursor-pointer rounded-xl border-2 p-4 flex flex-col items-center gap-3 transition-all duration-200
+                      ${formData.integrations.includes(platform)
+                        ? "border-primary bg-primary/5 shadow-md"
+                        : "border-border hover:border-primary/50 hover:bg-secondary/50"
+                      }
+                    `}
+                    onClick={() => toggleIntegration(platform)}
+                  >
+                    <div className={`
+                      w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold
+                      ${formData.integrations.includes(platform) ? "bg-primary text-white" : "bg-secondary text-muted-foreground"}
+                    `}>
+                      {platform[0]}
+                    </div>
+                    <span className="text-sm font-medium">{platform}</span>
+                  </div>
+                ))}
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="company">Company (Optional)</Label>
-            <Input
-              id="company"
-              placeholder="Acme Inc."
-              value={formData.company}
-              onChange={(e) => setFormData({...formData, company: e.target.value})}
-            />
-          </div>
+              <div className="flex items-center space-x-2 pt-4 justify-center">
+                <Checkbox id="updates" defaultChecked />
+                <Label htmlFor="updates" className="text-sm font-normal text-muted-foreground">
+                  Send me product updates and marketing tips
+                </Label>
+              </div>
+            </div>
+          )}
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Create a strong password"
-                value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                required
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-0 top-0 h-full px-3"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          {/* Navigation Buttons */}
+          <div className="flex justify-between mt-8 pt-6 border-t border-border">
+            {step > 1 ? (
+              <Button variant="ghost" onClick={handleBack} disabled={isLoading}>
+                <ArrowLeft className="mr-2 h-4 w-4" /> Back
               </Button>
-            </div>
+            ) : (
+              <div /> /* Spacer */
+            )}
+
+            {step < 3 ? (
+              <Button onClick={handleNext} className="bg-primary hover:bg-primary/90">
+                Continue <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            ) : (
+              <Button onClick={handleSignup} className="bg-gradient-hero shadow-lg shadow-primary/25" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating Account...
+                  </>
+                ) : (
+                  <>
+                    Start My Free Trial <Sparkles className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            )}
           </div>
 
-          {/* Consent Checkboxes */}
-          <div className="space-y-3">
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="terms"
-                checked={formData.agreeToTerms}
-                onCheckedChange={(checked) => setFormData({...formData, agreeToTerms: checked as boolean})}
-                required
-              />
-              <Label htmlFor="terms" className="text-sm leading-relaxed">
-                I agree to the{" "}
-                <Link to="/terms" className="text-primary hover:underline">
-                  Terms of Service
-                </Link>
-              </Label>
-            </div>
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="privacy"
-                checked={formData.agreeToPrivacy}
-                onCheckedChange={(checked) => setFormData({...formData, agreeToPrivacy: checked as boolean})}
-                required
-              />
-              <Label htmlFor="privacy" className="text-sm leading-relaxed">
-                I understand how my data will be used for AI ad personalization as described in the{" "}
-                <Link to="/privacy" className="text-primary hover:underline">
-                  Privacy Policy
-                </Link>
-              </Label>
-            </div>
-          </div>
-
-          <Button type="submit" variant="hero" className="w-full">
-            Create Account
-          </Button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator className="w-full" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" className="w-full">
-              <Mail className="h-4 w-4 mr-2" />
-              Google
-            </Button>
-            <Button variant="outline" className="w-full">
-              <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-              </svg>
-              LinkedIn
-            </Button>
-          </div>
-
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-sm text-muted-foreground mt-6">
             Already have an account?{" "}
-            <Link to="/auth/login" className="text-primary hover:underline font-medium">
+            <Link to="/auth/login" className="font-semibold text-primary hover:underline">
               Sign in
             </Link>
           </p>
-        </form>
+        </div>
       </Card>
     </div>
   );

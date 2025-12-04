@@ -1,0 +1,85 @@
+{
+  "notifications": [
+    {
+      "id": "notif-001",
+      "type": "success",
+      "title": "Campaign Performance Alert",
+      "message": "Your 'Summer Sale 2025' campaign has exceeded target ROAS by 20%!",
+      "timestamp": "2025-11-27T09:30:00Z",
+      "read": false,
+      "priority": "high",
+      "actionUrl": "/campaigns/camp-001"
+    },
+    {
+      "id": "notif-002",
+      "type": "warning",
+      "title": "Budget Alert",
+      "message": "Campaign 'B2B Lead Generation' has used 90% of allocated budget.",
+      "timestamp": "2025-11-27T08:15:00Z",
+      "read": false,
+      "priority": "medium",
+      "actionUrl": "/campaigns/camp-004"
+    },
+    {
+      "id": "notif-003",
+      "type": "info",
+      "title": "New Feature Available",
+      "message": "Try our new AI-powered audience targeting feature in Ad Studio!",
+      "timestamp": "2025-11-26T14:00:00Z",
+      "read": true,
+      "priority": "low",
+      "actionUrl": "/generate"
+    },
+    {
+      "id": "notif-004",
+      "type": "warning",
+      "title": "Campaign Paused",
+      "message": "Your campaign 'Holiday Special Campaign' was automatically paused due to low performance.",
+      "timestamp": "2025-11-25T16:45:00Z",
+      "read": true,
+      "priority": "high",
+      "actionUrl": "/campaigns/camp-003"
+    },
+    {
+      "id": "notif-005",
+      "type": "success",
+      "title": "Conversion Milestone",
+      "message": "Congratulations! You've reached 1000 total conversions across all campaigns.",
+      "timestamp": "2025-11-24T10:20:00Z",
+      "read": true,
+      "priority": "medium",
+      "actionUrl": "/analytics"
+    },
+    {
+      "id": "notif-006",
+      "type": "info",
+      "title": "Weekly Report Ready",
+      "message": "Your weekly performance report for Nov 18-24 is now available.",
+      "timestamp": "2025-11-25T08:00:00Z",
+      "read": true,
+      "priority": "low",
+      "actionUrl": "/analytics"
+    },
+    {
+      "id": "notif-007",
+      "type": "error",
+      "title": "Ad Rejected",
+      "message": "One of your ads in 'Product Launch' campaign was rejected by Google. Please review.",
+      "timestamp": "2025-11-23T11:30:00Z",
+      "read": true,
+      "priority": "high",
+      "actionUrl": "/campaigns/camp-002"
+    },
+    {
+      "id": "notif-008",
+      "type": "info",
+      "title": "Account Verified",
+      "message": "Your payment method has been successfully verified.",
+      "timestamp": "2025-11-22T09:00:00Z",
+      "read": true,
+      "priority": "low",
+      "actionUrl": "/settings"
+    }
+  ],
+  "unreadCount": 2
+}

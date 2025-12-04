@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -12,11 +12,11 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { 
-  LayoutDashboard, 
-  Sparkles, 
-  FolderOpen, 
-  BarChart3, 
+import {
+  LayoutDashboard,
+  Sparkles,
+  FolderOpen,
+  BarChart3,
   Settings,
   HelpCircle,
   User,
@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import AuthService from "@/services/authService";
 
 const mainNavItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -41,14 +42,25 @@ const bottomNavItems = [
 export function AppSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const currentUser = AuthService.getStoredUser();
+    if (currentUser) {
+      setUser(currentUser);
+    }
+  }, []);
 
   const isActive = (path: string) => currentPath === path;
-  const isExpanded = mainNavItems.some((i) => isActive(i.url)) || bottomNavItems.some((i) => isActive(i.url));
 
   const getNavCls = (isActive: boolean) =>
-    isActive 
-      ? "bg-primary text-primary-foreground font-medium shadow-sm" 
+    isActive
+      ? "bg-primary text-primary-foreground font-medium shadow-sm"
       : "hover:bg-muted/50 text-muted-foreground hover:text-foreground";
+
+  const handleLogout = () => {
+    AuthService.logout();
+  };
 
   return (
     <Sidebar className="w-64" collapsible="icon">
@@ -73,15 +85,15 @@ export function AppSidebar() {
               {mainNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end 
+                    <NavLink
+                      to={item.url}
+                      end
                       className={getNavCls(isActive(item.url))}
-                      >
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </NavLink>
-                    </SidebarMenuButton>
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -98,15 +110,15 @@ export function AppSidebar() {
                 {bottomNavItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <NavLink 
-                        to={item.url} 
-                        end 
+                      <NavLink
+                        to={item.url}
+                        end
                         className={getNavCls(isActive(item.url))}
-                        >
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
-                        </NavLink>
-                      </SidebarMenuButton>
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>
@@ -117,19 +129,25 @@ export function AppSidebar() {
           <div className="bg-muted/50 rounded-lg p-3 space-y-2">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-full bg-gradient-primary flex items-center justify-center">
-                <span className="text-xs font-medium text-primary-foreground">JD</span>
+                <span className="text-xs font-medium text-primary-foreground">
+                  {user?.firstName ? user.firstName[0] : 'U'}
+                </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">John Doe</p>
-                <p className="text-xs text-muted-foreground truncate">Pro Plan</p>
+                <p className="text-sm font-medium truncate">
+                  {user?.firstName ? `${user.firstName} ${user.lastName}` : 'User'}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {user?.companyName || 'Pro Plan'}
+                </p>
               </div>
             </div>
             <Separator />
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="w-full justify-start h-8 text-xs"
-              onClick={() => window.location.href = "/auth/login"}
+              onClick={handleLogout}
             >
               <LogOut className="h-3 w-3 mr-2" />
               Sign Out

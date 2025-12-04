@@ -1,9 +1,13 @@
+import { useState, useEffect } from 'react';
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import DataService from '@/services/dataService';
+import { useNavigate } from 'react-router-dom';
 import { 
   FolderOpen, 
   Plus, 
@@ -15,15 +19,49 @@ import {
   BarChart3,
   Users,
   Clock,
-  Target
+  Target,
+  Loader2
 } from "lucide-react";
 
 const Campaigns = () => {
-  const campaigns = [
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [summary, setSummary] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    loadCampaigns();
+  }, []);
+
+  const loadCampaigns = async () => {
+    try {
+      setIsLoading(true);
+      const data = await DataService.getCampaigns();
+      setCampaigns(data.campaigns || []);
+      setSummary(data.summary || {});
+    } catch (error) {
+      console.error('Failed to load campaigns:', error);
+      toast({
+        title: "Error loading campaigns",
+        description: "Failed to fetch campaign data.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const filteredCampaigns = campaigns.filter(campaign => 
+    campaign.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const demoData = [
     {
       id: 1,
       name: "Summer Sale Blitz",
-      status: "Active",
+      status: "active",
       objective: "Sales",
       ads: 15,
       spend: "$2,847",
@@ -124,17 +162,17 @@ const Campaigns = () => {
                 <FolderOpen className="h-5 w-5 text-primary" />
                 <span className="text-sm font-medium">Total Campaigns</span>
               </div>
-              <div className="text-2xl font-bold">5</div>
-              <div className="text-sm text-muted-foreground">2 active</div>
+              <div className="text-2xl font-bold">{campaigns.length}</div>
+              <div className="text-sm text-muted-foreground">{summary?.activeCampaigns || 0} active</div>
             </Card>
             
             <Card className="p-6">
               <div className="flex items-center gap-3 mb-2">
                 <Target className="h-5 w-5 text-accent" />
-                <span className="text-sm font-medium">Total Ads</span>
+                <span className="text-sm font-medium">Avg CTR</span>
               </div>
-              <div className="text-2xl font-bold">61</div>
-              <div className="text-sm text-muted-foreground">+12 this week</div>
+              <div className="text-2xl font-bold">{summary?.averageCTR?.toFixed(2) || 0}%</div>
+              <div className="text-sm text-muted-foreground">Click-through rate</div>
             </Card>
             
             <Card className="p-6">
@@ -142,17 +180,17 @@ const Campaigns = () => {
                 <BarChart3 className="h-5 w-5 text-accent-orange" />
                 <span className="text-sm font-medium">Total Spend</span>
               </div>
-              <div className="text-2xl font-bold">$13.2K</div>
+              <div className="text-2xl font-bold">${summary?.totalSpent?.toLocaleString() || 0}</div>
               <div className="text-sm text-muted-foreground">This month</div>
             </Card>
             
             <Card className="p-6">
               <div className="flex items-center gap-3 mb-2">
                 <Users className="h-5 w-5 text-accent-blue" />
-                <span className="text-sm font-medium">Total Reach</span>
+                <span className="text-sm font-medium">Total Impressions</span>
               </div>
-              <div className="text-2xl font-bold">245K</div>
-              <div className="text-sm text-muted-foreground">Unique users</div>
+              <div className="text-2xl font-bold">{summary?.totalImpressions?.toLocaleString() || 0}</div>
+              <div className="text-sm text-muted-foreground">Across all campaigns</div>
             </Card>
           </div>
 
@@ -160,91 +198,106 @@ const Campaigns = () => {
           <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search campaigns..." className="pl-10" />
+              <Input 
+                placeholder="Search campaigns..." 
+                className="pl-10" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-            <Button variant="outline">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
+            <Button variant="outline" onClick={loadCampaigns} disabled={isLoading}>
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Filter className="h-4 w-4 mr-2" />
+              )}
+              Refresh
             </Button>
           </div>
 
           {/* Campaigns Table */}
           <Card className="overflow-hidden">
             <div className="p-6 border-b">
-              <h3 className="text-lg font-semibold">All Campaigns</h3>
+              <h3 className="text-lg font-semibold">All Campaigns ({filteredCampaigns.length})</h3>
             </div>
-            <div className="overflow-x-auto">
-              <div className="min-w-full">
-                {/* Header */}
-                <div className="grid grid-cols-12 gap-4 p-4 bg-muted/50 border-b text-sm font-medium text-muted-foreground">
-                  <div className="col-span-3">Campaign</div>
-                  <div className="col-span-1">Status</div>
-                  <div className="col-span-1">Ads</div>
-                  <div className="col-span-1">Spend</div>
-                  <div className="col-span-1">CTR</div>
-                  <div className="col-span-1">Conv.</div>
-                  <div className="col-span-2">Reach</div>
-                  <div className="col-span-1">Modified</div>
-                  <div className="col-span-1">Actions</div>
-                </div>
-
-                {/* Rows */}
-                {campaigns.map((campaign) => (
-                  <div key={campaign.id} className="grid grid-cols-12 gap-4 p-4 border-b hover:bg-muted/30 transition-colors">
-                    <div className="col-span-3 space-y-1">
-                      <div className="font-medium">{campaign.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {campaign.objective} • Created {new Date(campaign.created).toLocaleDateString()}
-                      </div>
-                    </div>
-                    
-                    <div className="col-span-1">
-                      <Badge variant={getStatusColor(campaign.status) as any}>
-                        {campaign.status}
-                      </Badge>
-                    </div>
-                    
-                    <div className="col-span-1">
-                      <div className="font-medium">{campaign.ads}</div>
-                    </div>
-                    
-                    <div className="col-span-1">
-                      <div className="font-medium">{campaign.spend}</div>
-                    </div>
-                    
-                    <div className="col-span-1">
-                      <div className="font-medium">{campaign.ctr}</div>
-                    </div>
-                    
-                    <div className="col-span-1">
-                      <div className="font-medium">{campaign.conversions}</div>
-                    </div>
-                    
-                    <div className="col-span-2">
-                      <div className="font-medium">{campaign.reach}</div>
-                    </div>
-                    
-                    <div className="col-span-1">
-                      <div className="text-sm text-muted-foreground">{campaign.lastModified}</div>
-                    </div>
-                    
-                    <div className="col-span-1">
-                      <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+            {isLoading ? (
+              <div className="p-12 flex items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
-            </div>
+            ) : filteredCampaigns.length === 0 ? (
+              <div className="p-12 text-center">
+                <p className="text-muted-foreground">No campaigns found. Create your first campaign to get started!</p>
+                <Button variant="hero" className="mt-4" onClick={() => navigate('/generate')}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Campaign
+                </Button>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <div className="min-w-full">
+                  {/* Header */}
+                  <div className="grid grid-cols-12 gap-4 p-4 bg-muted/50 border-b text-sm font-medium text-muted-foreground">
+                    <div className="col-span-3">Campaign</div>
+                    <div className="col-span-1">Status</div>
+                    <div className="col-span-1">Platform</div>
+                    <div className="col-span-1">Spend</div>
+                    <div className="col-span-1">CTR</div>
+                    <div className="col-span-2">Impressions</div>
+                    <div className="col-span-2">Revenue</div>
+                    <div className="col-span-1">Actions</div>
+                  </div>
+
+                  {/* Rows */}
+                  {filteredCampaigns.map((campaign) => (
+                    <div key={campaign.id} className="grid grid-cols-12 gap-4 p-4 border-b hover:bg-muted/30 transition-colors">
+                      <div className="col-span-3 space-y-1">
+                        <div className="font-medium">{campaign.name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {campaign.platform} platform
+                        </div>
+                      </div>
+                      
+                      <div className="col-span-1">
+                        <Badge variant={campaign.status === 'active' ? 'default' : 'secondary'}>
+                          {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                        </Badge>
+                      </div>
+                      
+                      <div className="col-span-1">
+                        <div className="font-medium">{campaign.platform.charAt(0).toUpperCase() + campaign.platform.slice(1)}</div>
+                      </div>
+                      
+                      <div className="col-span-1">
+                        <div className="font-medium">${campaign.spent.toLocaleString()}</div>
+                      </div>
+                      
+                      <div className="col-span-1">
+                        <div className="font-medium">{campaign.ctr}%</div>
+                      </div>
+                      
+                      <div className="col-span-2">
+                        <div className="font-medium">{campaign.impressions.toLocaleString()}</div>
+                      </div>
+                      
+                      <div className="col-span-2">
+                        <div className="font-medium">${campaign.revenue.toLocaleString()}</div>
+                      </div>
+                      
+                      <div className="col-span-1">
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="sm" onClick={() => navigate(`/campaigns/${campaign.id}`)}>
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </Card>
 
           {/* Quick Actions */}
