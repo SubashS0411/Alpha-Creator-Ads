@@ -1,0 +1,199 @@
+.mobile-landing-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: url('/assests/image.png') center center / cover no-repeat;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.mobile-screen {
+  width: 375px;
+  height: 667px;
+  background: url('/assests/wallpaper.jpg') center center / cover no-repeat;
+  border-radius: 35px;
+  border: 8px solid #000000;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.status-bar {
+  height: 24px;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.time {
+  font-weight: 600;
+}
+
+.battery {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.home-screen {
+  padding: 30px 20px 20px 20px;
+  height: calc(100% - 24px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.date-time {
+  text-align: center;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.date {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 5px;
+}
+
+.clock {
+  font-size: 64px;
+  font-weight: 300;
+  letter-spacing: -2px;
+}
+
+/* App Grid - 3x3 Layout */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+  margin-top: auto;
+  align-items: center;
+  justify-items: center;
+}
+
+.app-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.app-icon a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app-icon:hover {
+  transform: scale(1.08);
+}
+
+.app-icon:active {
+  transform: scale(0.92);
+}
+
+.icon-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: visible;
+  margin-bottom: 5px;
+}
+
+.icon-circle img {
+  width: 50px;
+  height: 50px;
+  border-radius: 13px;
+  object-fit: cover;
+}
+
+.icon-circle.phone {
+  background: linear-gradient(135deg, #34C759, #30B850);
+}
+
+.icon-circle.messages {
+  background: linear-gradient(135deg, #0A84FF, #0056CC);
+}
+
+.icon-circle.camera {
+  background: linear-gradient(135deg, #8E8E93, #636366);
+}
+
+.icon-circle.gallery {
+  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+}
+
+.whatsapp-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #FF3040;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 12px;
+  min-width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.app-name {
+  color: white;
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  margin-top: 4px;
+}
+
+.google { background: linear-gradient(135deg, #4285F4, #34A853); }
+.youtube { background: linear-gradient(135deg, #FF0000, #CC0000); }
+.instagram { background: linear-gradient(135deg, #E4405F, #FCCC63, #833AB4); }
+.facebook { background: linear-gradient(135deg, #1877F2, #42A5F5); }
+.whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); }
+.gallery { background: linear-gradient(135deg, #FF6B6B, #4ECDC4); }
+
+.home-indicator {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 135px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+  .mobile-screen {
+    width: 95vw;
+    height: 95vh;
+    max-width: 375px;
+    max-height: 667px;
+  }
+}
