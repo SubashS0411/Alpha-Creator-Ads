@@ -1,18 +1,39 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const YouTubeAnalytics = require('../models/YouTubeAnalytics');
 const YouTubeVideo = require('../models/YouTubeVideo');
 const YouTubeChannel = require('../models/YouTubeChannel');
+
+// Helper function to validate ObjectId
+const isValidObjectId = (id) => {
+  return mongoose.Types.ObjectId.isValid(id) && id.length === 24;
+};
+
+// Helper function to convert to ObjectId or generate new one
+const toObjectId = (id) => {
+  if (isValidObjectId(id)) {
+    return new mongoose.Types.ObjectId(id);
+  }
+  // For mock data IDs like "1", "ch1", generate a consistent ObjectId
+  return new mongoose.Types.ObjectId();
+};
 
 // Track watch session start
 router.post('/watch/start', async (req, res) => {
   try {
     const { userId, videoId, channelId, source = 'unknown', category } = req.body;
 
+    // For mock data or invalid IDs, just return success without saving to database
+    if (!isValidObjectId(videoId) || !isValidObjectId(channelId)) {
+      console.log('Mock data detected - skipping analytics tracking');
+      return res.json({ sessionId: new mongoose.Types.ObjectId() });
+    }
+
     const analytics = new YouTubeAnalytics({
-      userId,
-      videoId,
-      channelId,
+      userId: toObjectId(userId),
+      videoId: toObjectId(videoId),
+      channelId: toObjectId(channelId),
       sessionType: 'watch',
       source,
       category,

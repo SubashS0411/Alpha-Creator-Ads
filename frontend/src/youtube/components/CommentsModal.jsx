@@ -15,7 +15,7 @@ const CommentsModal = ({ isOpen, onClose, videoId }) => {
   const fetchComments = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5001/api/youtube/comments/video/${videoId}`);
+      const response = await fetch(`http://localhost:5000/api/youtube/comments/video/${videoId}`);
       if (response.ok) {
         const data = await response.json();
         setComments(data);

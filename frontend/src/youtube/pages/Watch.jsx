@@ -25,6 +25,7 @@ import {
 } from '../../store/youtubeSlice';
 import VideoCard from '../components/VideoCard';
 import CommentsModal from '../components/CommentsModal';
+import YouTubeVideoPlayer from '../../components/YouTubeVideoPlayer';
 
 const Watch = () => {
   const { videoId } = useParams();
@@ -97,7 +98,7 @@ const Watch = () => {
     if (!currentVideo) return;
     
     try {
-      const response = await fetch('http://localhost:5001/api/youtube/analytics/watch/start', {
+      const response = await fetch('http://localhost:5000/api/youtube/analytics/watch/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -122,7 +123,7 @@ const Watch = () => {
     const actualWatchDuration = Math.max(0, (currentTime || 0));
     
     try {
-      await fetch('http://localhost:5001/api/youtube/analytics/watch/end', {
+      await fetch('http://localhost:5000/api/youtube/analytics/watch/end', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -231,7 +232,7 @@ const Watch = () => {
 
   const trackInteraction = async (type, action) => {
     try {
-      await fetch('http://localhost:5001/api/youtube/analytics/interaction', {
+      await fetch('http://localhost:5000/api/youtube/analytics/interaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -323,102 +324,19 @@ const Watch = () => {
       </div>
 
       <div className="h-full pb-0 overflow-y-auto">
-        {/* Video Player Container */}
-        <div 
-          ref={playerRef}
-          className="relative bg-black" 
-          style={{ aspectRatio: '16/9' }}
-          onMouseMove={showControlsTemporarily}
-          onMouseLeave={() => isPlaying && setTimeout(() => setShowControls(false), 1000)}
-        >
-          <video 
-            ref={videoRef}
-            src={currentVideo.videoUrl.startsWith('http') ? currentVideo.videoUrl : `http://localhost:5001${currentVideo.videoUrl}`}
-            poster={currentVideo.thumbnailUrl}
-            className="w-full h-full object-cover"
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            onTimeUpdate={handleTimeUpdate}
-            onLoadedMetadata={handleLoadedMetadata}
-            onEnded={() => setIsPlaying(false)}
-            onClick={handlePlayPause}
-            controls={false}
+        {/* Video Player Container with Advertisement Integration */}
+        <div className="relative bg-black" style={{ aspectRatio: '16/9' }}>
+          <YouTubeVideoPlayer 
+            video={{
+              ...currentVideo,
+              videoUrl: currentVideo.videoUrl?.startsWith('http') ? currentVideo.videoUrl : `http://localhost:5000${currentVideo.videoUrl || ''}`
+            }}
+            autoplay={autoPlay}
+            onVideoEnd={() => {
+              setIsPlaying(false);
+              if (onVideoEnd) onVideoEnd();
+            }}
           />
-          
-          {/* Video Controls */}
-          {(!isPlaying || showControls) && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <button 
-                onClick={handlePlayPause}
-                className="w-16 h-16 bg-black bg-opacity-50 rounded-full flex items-center justify-center hover:bg-opacity-70 transition-all"
-              >
-                {isPlaying ? (
-                  <MdPause className="w-8 h-8 text-white" />
-                ) : (
-                  <MdPlayArrow className="w-8 h-8 text-white ml-1" />
-                )}
-              </button>
-            </div>
-          )}
-
-          {/* Progress Bar */}
-          {(!isPlaying || showControls) && (
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/50 to-transparent p-4">
-              <div className="flex items-center space-x-4 mb-2">
-                <span className="text-white text-sm">
-                  {formatDuration(Math.floor(currentTime))}
-                </span>
-                <div 
-                  className="flex-1 bg-gray-600 h-1 rounded-full cursor-pointer hover:h-2 transition-all"
-                  onClick={handleProgressClick}
-                >
-                  <div 
-                    className="bg-red-600 h-full rounded-full transition-all duration-200"
-                    style={{ width: `${progress * 100}%` }}
-                  />
-                </div>
-                <span className="text-white text-sm">
-                  {formatDuration(Math.floor(duration || currentVideo.duration))}
-                </span>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <button onClick={handlePlayPause} className="hover:scale-110 transition-transform">
-                    {isPlaying ? (
-                      <MdPause className="w-6 h-6 text-white" />
-                    ) : (
-                      <MdPlayArrow className="w-6 h-6 text-white" />
-                    )}
-                  </button>
-                  <div className="flex items-center space-x-2">
-                    <MdVolumeUp className="w-5 h-5 text-white" />
-                    <input 
-                      type="range" 
-                      min="0" 
-                      max="1" 
-                      step="0.1" 
-                      value={volume}
-                      onChange={(e) => {
-                        const newVolume = parseFloat(e.target.value);
-                        setVolume(newVolume);
-                        if (videoRef.current) {
-                          videoRef.current.volume = newVolume;
-                        }
-                      }}
-                      className="w-16 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer"
-                    />
-                  </div>
-                </div>
-                <button 
-                  onClick={toggleFullscreen}
-                  className="hover:scale-110 transition-transform"
-                >
-                  <MdFullscreen className="w-6 h-6 text-white" />
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Video Details */}

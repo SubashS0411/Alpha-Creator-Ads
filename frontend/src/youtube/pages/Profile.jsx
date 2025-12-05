@@ -64,7 +64,7 @@ const Profile = () => {
 
   const fetchWatchHistory = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/youtube/analytics/history/674587d123456789abcdef01');
+      const response = await fetch('http://localhost:5000/api/youtube/analytics/history/674587d123456789abcdef01');
       if (response.ok) {
         const data = await response.json();
         setWatchHistory(data.slice(0, 20)); // Latest 20 videos
@@ -87,7 +87,7 @@ const Profile = () => {
 
   const fetchAnalyticsData = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/youtube/analytics/user-stats/674587d123456789abcdef01');
+      const response = await fetch('http://localhost:5000/api/youtube/analytics/user-stats/674587d123456789abcdef01');
       if (response.ok) {
         const data = await response.json();
         setAnalyticsData(data);

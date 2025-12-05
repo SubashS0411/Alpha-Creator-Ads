@@ -8,6 +8,7 @@ import Profile from './instagram/pages/Profile';
 import Explore from './instagram/pages/Explore';
 import Reels from './instagram/pages/Reels';
 import YouTubeApp from './youtube/components/YouTubeApp';
+import AdDemo from './components/AdDemo';
 import './index.css';
 
 function App() {
@@ -34,6 +35,9 @@ function App() {
         
         {/* YouTube App */}
         <Route path="/youtube/*" element={<YouTubeApp />} />
+        
+        {/* Ad System Demo */}
+        <Route path="/ad-demo" element={<AdDemo />} />
       </Routes>
     </div>
   );

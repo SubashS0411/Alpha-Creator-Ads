@@ -69,6 +69,14 @@ const MobileLanding = () => {
       className: 'gallery',
       external: false,
       onClick: () => alert('Gallery app would open here!\n\nIn a real mobile app, this would open the device\'s photo gallery.')
+    },
+    {
+      name: 'Ad Demo',
+      icon: '/assests/Youtubelogo.png',
+      href: '#',
+      className: 'ad-demo',
+      external: false,
+      onClick: () => navigate('/ad-demo')
     }
   ];
 

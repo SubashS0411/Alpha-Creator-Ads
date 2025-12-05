@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -7,6 +8,11 @@ const YouTubeVideo = require('../models/YouTubeVideo');
 const YouTubeChannel = require('../models/YouTubeChannel');
 const YouTubeComment = require('../models/YouTubeComment');
 const YouTubeAnalytics = require('../models/YouTubeAnalytics');
+
+// Helper function to validate ObjectId
+const isValidObjectId = (id) => {
+  return mongoose.Types.ObjectId.isValid(id) && id.length === 24;
+};
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -87,11 +93,19 @@ router.get('/shorts', async (req, res) => {
 router.get('/:videoId', async (req, res) => {
   try {
     const { userId } = req.query; // Get userId from query params if provided
+    
+    // Check if videoId is valid ObjectId
+    if (!isValidObjectId(req.params.videoId)) {
+      console.log(`Invalid video ID: ${req.params.videoId}, returning empty response`);
+      return res.status(200).json(null);
+    }
+
     const video = await YouTubeVideo.findById(req.params.videoId)
       .populate('channelId', 'name handle avatarUrl subscriberCount verified description');
 
     if (!video) {
-      return res.status(404).json({ error: 'Video not found' });
+      console.log(`Video not found: ${req.params.videoId}, returning empty response`);
+      return res.status(200).json(null);
     }
 
     // Increment view count
@@ -115,9 +129,16 @@ router.get('/:videoId', async (req, res) => {
 // Get video recommendations
 router.get('/:videoId/recommendations', async (req, res) => {
   try {
+    // Check if videoId is valid ObjectId
+    if (!isValidObjectId(req.params.videoId)) {
+      console.log(`Invalid video ID for recommendations: ${req.params.videoId}, returning empty array`);
+      return res.status(200).json([]);
+    }
+
     const currentVideo = await YouTubeVideo.findById(req.params.videoId);
     if (!currentVideo) {
-      return res.status(404).json({ error: 'Video not found' });
+      console.log(`Video not found for recommendations: ${req.params.videoId}, returning empty array`);
+      return res.status(200).json([]);
     }
 
     const recommendations = await YouTubeVideo.find({

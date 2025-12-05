@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-const API_BASE = 'http://localhost:5001/api/youtube';
+const API_BASE = 'http://localhost:5000/api/youtube';
 
 // Mock data for fallback
 const getMockVideos = (category) => [
@@ -184,27 +184,47 @@ const getMockShorts = () => [
 export const fetchHomeVideos = createAsyncThunk(
   'youtube/fetchHomeVideos',
   async ({ category = 'All', page = 1 } = {}) => {
-    const response = await fetch(`${API_BASE}/videos/home?category=${category}&page=${page}&limit=20`);
-    if (!response.ok) throw new Error('Failed to fetch videos');
-    return response.json();
+    try {
+      const response = await fetch(`${API_BASE}/home?category=${category}&page=${page}&limit=20`);
+      if (!response.ok) throw new Error('API not available');
+      return response.json();
+    } catch (error) {
+      console.log('Using mock data - backend API not available');
+      // Fallback to mock data when backend is not available
+      return getMockVideos(category);
+    }
   }
 );
 
 export const fetchShorts = createAsyncThunk(
   'youtube/fetchShorts',
   async ({ page = 1 } = {}) => {
-    const response = await fetch(`${API_BASE}/videos/shorts?page=${page}&limit=10`);
-    if (!response.ok) throw new Error('Failed to fetch shorts');
-    return response.json();
+    try {
+      const response = await fetch(`${API_BASE}/shorts?page=${page}&limit=10`);
+      if (!response.ok) throw new Error('API not available');
+      return response.json();
+    } catch (error) {
+      console.log('Using mock shorts data - backend API not available');
+      // Fallback to mock data
+      return getMockShorts();
+    }
   }
 );
 
 export const fetchVideoDetails = createAsyncThunk(
   'youtube/fetchVideoDetails',
   async (videoId) => {
-    const response = await fetch(`${API_BASE}/videos/${videoId}?userId=674587d123456789abcdef01`);
-    if (!response.ok) throw new Error('Failed to fetch video details');
-    return response.json();
+    try {
+      const response = await fetch(`${API_BASE}/videos/${videoId}?userId=674587d123456789abcdef01`);
+      if (!response.ok) throw new Error('API not available');
+      return response.json();
+    } catch (error) {
+      console.log('Using mock video data - backend API not available');
+      // Fallback to mock data
+      const mockVideo = getMockVideos('All').find(v => v._id === videoId);
+      if (!mockVideo) throw new Error('Video not found');
+      return mockVideo;
+    }
   }
 );
 

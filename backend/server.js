@@ -20,6 +20,7 @@ const youtubeChannels = require('./youtube/routes/youtubeChannels');
 const youtubeSearch = require('./youtube/routes/youtubeSearch');
 const youtubeComments = require('./youtube/routes/youtubeComments');
 const youtubeAnalytics = require('./youtube/routes/youtubeAnalytics');
+const advertisementRoutes = require('./routes/advertisements');
 const path = require('path');
 
 const app = express();
@@ -53,6 +54,16 @@ app.use('/api/youtube/channels', youtubeChannels);
 app.use('/api/youtube/search', youtubeSearch);
 app.use('/api/youtube/comments', youtubeComments);
 app.use('/api/youtube/analytics', youtubeAnalytics);
+
+// YouTube home route (redirect to videos/home)
+app.get('/api/youtube/home', (req, res) => {
+  // Forward the request to the videos/home route
+  req.url = '/home' + (req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : '');
+  youtubeVideos(req, res);
+});
+
+// Advertisement API routes
+app.use('/api', advertisementRoutes);
 
 // MongoDB Connection
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/clone';
