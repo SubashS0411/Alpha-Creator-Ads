@@ -161,28 +161,18 @@ class AuthService {
       throw new CustomError('Invalid email or password', 401);
     }
 
-    // Check if account is locked
-    if (user.isLocked) {
-      throw new CustomError('Account is temporarily locked. Please try again later.', 423);
-    }
-
-    // Check if account is active
-    if (!user.isActive) {
-      throw new CustomError('Account has been deactivated', 403);
-    }
-
     // Verify password
     const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
-      await user.incLoginAttempts();
+      // await user.incLoginAttempts(); // Removed for disabling lock mechanism
       throw new CustomError('Invalid email or password', 401);
     }
 
     // Reset login attempts on successful login
-    if (user.loginAttempts > 0) {
-      await user.resetLoginAttempts();
-    }
+    // if (user.loginAttempts > 0) { // Removed for disabling lock mechanism
+    //   await user.resetLoginAttempts(); // Removed for disabling lock mechanism
+    // }
 
     // Update last login
     user.lastLogin = new Date();

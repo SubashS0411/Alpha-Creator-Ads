@@ -13,7 +13,7 @@ const PromptGenerator: React.FC = () => {
     setIsLoading(true);
     
     try {
-      const webhookUrl = `http://localhost:5678/webhook/prompt-generator?title=${encodeURIComponent(title)}`;
+      const webhookUrl = `http://localhost:5678/webhook-test/Prompt?title=${encodeURIComponent(title)}`;
       
       const response = await fetch(webhookUrl, {
         method: 'GET',

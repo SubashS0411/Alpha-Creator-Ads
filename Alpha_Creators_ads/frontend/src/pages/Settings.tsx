@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Card } from "@/components/ui/card";
@@ -7,6 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useTheme } from "@/components/theme-provider";
+import { useToast } from "@/hooks/use-toast";
+import { useUserStore } from "@/stores/userStore";
+import AuthService from "@/services/authService";
 import { 
   User, 
   Settings as SettingsIcon,
@@ -18,6 +22,55 @@ import {
 
 const Settings = () => {
   const { theme } = useTheme();
+  const { toast } = useToast();
+  const { currentUser, updateProfile } = useUserStore();
+  const [profileForm, setProfileForm] = useState({
+    fullName: "",
+    email: "",
+    companyName: "",
+    industry: ""
+  });
+
+  useEffect(() => {
+    if (currentUser) {
+      setProfileForm({
+        fullName: currentUser.name || "",
+        email: currentUser.email || "",
+        companyName: currentUser.companyName || "",
+        industry: currentUser.industry || ""
+      });
+    }
+  }, [currentUser]);
+
+  const handleProfileChange = (key: keyof typeof profileForm, value: string) => {
+    setProfileForm(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleProfileSave = () => {
+    updateProfile({
+      name: profileForm.fullName,
+      email: profileForm.email,
+      companyName: profileForm.companyName,
+      industry: profileForm.industry
+    });
+
+    const storedUser = AuthService.getStoredUser();
+    if (storedUser) {
+      const updatedUser = {
+        ...storedUser,
+        name: profileForm.fullName,
+        email: profileForm.email,
+        companyName: profileForm.companyName,
+        industry: profileForm.industry
+      };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    }
+
+    toast({
+      title: "Profile updated",
+      description: "Your settings were saved successfully."
+    });
+  };
   
   return (
     <SidebarProvider>
@@ -42,13 +95,38 @@ const Settings = () => {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Full Name</Label>
-                  <Input defaultValue="John Doe" />
+                  <Input
+                    value={profileForm.fullName}
+                    onChange={(e) => handleProfileChange("fullName", e.target.value)}
+                    placeholder="Enter your name"
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>Email</Label>
-                  <Input defaultValue="john@company.com" />
+                  <Input
+                    type="email"
+                    value={profileForm.email}
+                    onChange={(e) => handleProfileChange("email", e.target.value)}
+                    placeholder="you@example.com"
+                  />
                 </div>
-                <Button size="sm">Update Profile</Button>
+                <div className="space-y-2">
+                  <Label>Company</Label>
+                  <Input
+                    value={profileForm.companyName}
+                    onChange={(e) => handleProfileChange("companyName", e.target.value)}
+                    placeholder="Company name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Industry</Label>
+                  <Input
+                    value={profileForm.industry}
+                    onChange={(e) => handleProfileChange("industry", e.target.value)}
+                    placeholder="e.g. Healthcare, Fintech"
+                  />
+                </div>
+                <Button size="sm" onClick={handleProfileSave}>Update Profile</Button>
               </div>
             </Card>
 

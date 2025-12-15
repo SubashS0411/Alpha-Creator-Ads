@@ -22,8 +22,6 @@ export interface IUser extends Document {
   emailVerificationExpires?: Date;
   passwordResetToken?: string;
   passwordResetExpires?: Date;
-  loginAttempts: number;
-  lockUntil?: Date;
   refreshToken?: string;
   role: 'user' | 'admin' | 'moderator';
   subscription: {
@@ -37,13 +35,8 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
 
-  // Virtuals
-  isLocked: boolean;
-
   // Methods
   comparePassword(candidatePassword: string): Promise<boolean>;
-  incLoginAttempts(): Promise<any>;
-  resetLoginAttempts(): Promise<any>;
 }
 
 const userSchema = new Schema<IUser>({
@@ -116,13 +109,6 @@ const userSchema = new Schema<IUser>({
     type: Date,
     select: false,
   },
-  loginAttempts: {
-    type: Number,
-    default: 0,
-  },
-  lockUntil: {
-    type: Date,
-  },
   refreshToken: {
     type: String,
     select: false,
@@ -171,11 +157,6 @@ const userSchema = new Schema<IUser>({
 userSchema.index({ createdAt: -1 });
 userSchema.index({ 'subscription.plan': 1 });
 
-// Virtual for account lock status
-userSchema.virtual('isLocked').get(function (this: IUser) {
-  return !!(this.lockUntil && this.lockUntil > new Date());
-});
-
 // Hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
@@ -196,36 +177,6 @@ userSchema.methods.comparePassword = async function (candidatePassword: string):
   } catch (error) {
     throw error;
   }
-};
-
-// Method to increment login attempts
-userSchema.methods.incLoginAttempts = async function () {
-  // Reset attempts if lock has expired
-  if (this.lockUntil && this.lockUntil < new Date()) {
-    return await this.updateOne({
-      $set: { loginAttempts: 1 },
-      $unset: { lockUntil: 1 }
-    });
-  }
-
-  const updates: any = { $inc: { loginAttempts: 1 } };
-  const maxAttempts = 5;
-
-  // Lock account after max attempts
-  const needsLock = this.loginAttempts + 1 >= maxAttempts && !this.isLocked;
-  if (needsLock) {
-    updates.$set = { lockUntil: new Date(Date.now() + 1800000) }; // 30 minutes
-  }
-
-  return await this.updateOne(updates);
-};
-
-// Method to reset login attempts
-userSchema.methods.resetLoginAttempts = async function () {
-  return await this.updateOne({
-    $set: { loginAttempts: 0 },
-    $unset: { lockUntil: 1 }
-  });
 };
 
 const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);

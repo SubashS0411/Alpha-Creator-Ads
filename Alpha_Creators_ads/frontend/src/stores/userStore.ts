@@ -5,6 +5,11 @@ export interface UserProfile {
   id: string;
   email: string;
   name: string;
+  companyName?: string;
+  companySize?: string;
+  industry?: string;
+  monthlyAdSpend?: string;
+  integrations?: string[];
   
   // Demographics
   demographics: {

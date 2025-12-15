@@ -7,6 +7,7 @@ const YouTubeVideo = require('../models/YouTubeVideo');
 const YouTubeChannel = require('../models/YouTubeChannel');
 const YouTubeComment = require('../models/YouTubeComment');
 const YouTubeAnalytics = require('../models/YouTubeAnalytics');
+const sampleVideos = require('../data/sampleVideos');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -54,10 +55,15 @@ router.get('/home', async (req, res) => {
       .skip(skip)
       .limit(parseInt(limit));
 
+    if (!videos || videos.length === 0) {
+      console.warn('YouTube home feed returned no results from database. Falling back to sample data.');
+      return res.json(sampleVideos.slice(0, parseInt(limit)));
+    }
+
     res.json(videos);
   } catch (error) {
     console.error('Error fetching home videos:', error);
-    res.status(500).json({ error: 'Failed to fetch videos' });
+    res.json(sampleVideos);
   }
 });
 
@@ -91,6 +97,15 @@ router.get('/:videoId', async (req, res) => {
       .populate('channelId', 'name handle avatarUrl subscriberCount verified description');
 
     if (!video) {
+      const fallbackVideo = sampleVideos.find(v => v._id === req.params.videoId);
+      if (fallbackVideo) {
+        const videoData = { ...fallbackVideo };
+        if (userId) {
+          videoData.isLikedByUser = false;
+          videoData.isDislikedByUser = false;
+        }
+        return res.json(videoData);
+      }
       return res.status(404).json({ error: 'Video not found' });
     }
 
@@ -108,6 +123,10 @@ router.get('/:videoId', async (req, res) => {
     res.json(videoData);
   } catch (error) {
     console.error('Error fetching video:', error);
+    const fallbackVideo = sampleVideos.find(v => v._id === req.params.videoId);
+    if (fallbackVideo) {
+      return res.json(fallbackVideo);
+    }
     res.status(500).json({ error: 'Failed to fetch video' });
   }
 });
@@ -117,6 +136,13 @@ router.get('/:videoId/recommendations', async (req, res) => {
   try {
     const currentVideo = await YouTubeVideo.findById(req.params.videoId);
     if (!currentVideo) {
+      const fallbackCurrent = sampleVideos.find(v => v._id === req.params.videoId);
+      if (fallbackCurrent) {
+        const fallbackRecommendations = sampleVideos
+          .filter(v => v._id !== fallbackCurrent._id)
+          .slice(0, 20);
+        return res.json(fallbackRecommendations);
+      }
       return res.status(404).json({ error: 'Video not found' });
     }
 
@@ -136,6 +162,12 @@ router.get('/:videoId/recommendations', async (req, res) => {
     res.json(recommendations);
   } catch (error) {
     console.error('Error fetching recommendations:', error);
+    const fallbackRecommendations = sampleVideos
+      .filter(v => v._id !== req.params.videoId)
+      .slice(0, 20);
+    if (fallbackRecommendations.length > 0) {
+      return res.json(fallbackRecommendations);
+    }
     res.status(500).json({ error: 'Failed to fetch recommendations' });
   }
 });

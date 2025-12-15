@@ -10,7 +10,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import MultiStepProgressBar from "@/components/auth/MultiStepProgressBar";
 import PasswordStrengthMeter from "@/components/auth/PasswordStrengthMeter";
-import SocialLoginButtons from "@/components/auth/SocialLoginButtons";
 import signupBg from "@/assets/images/signup-bg.png";
 import authService from "@/services/authService";
 
@@ -226,16 +225,6 @@ const Signup = () => {
                 </Label>
               </div>
 
-              <div className="relative py-4">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-border" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">Or sign up with</span>
-                </div>
-              </div>
-
-              <SocialLoginButtons />
             </div>
           )}
 
@@ -319,8 +308,8 @@ const Signup = () => {
                     className={`
                       cursor-pointer rounded-xl border-2 p-4 flex flex-col items-center gap-3 transition-all duration-200
                       ${formData.integrations.includes(platform)
-                        ? "border-primary bg-primary/5 shadow-md"
-                        : "border-border hover:border-primary/50 hover:bg-secondary/50"
+                        ? "border-primary bg-primary/5 shadow-[0_0_24px_rgba(59,130,246,0.45)] hover:shadow-[0_0_30px_rgba(59,130,246,0.65)]"
+                        : "border-border hover:border-primary/60 hover:bg-secondary/60 hover:shadow-[0_0_24px_rgba(59,130,246,0.45)]"
                       }
                     `}
                     onClick={() => toggleIntegration(platform)}
@@ -356,11 +345,18 @@ const Signup = () => {
             )}
 
             {step < 3 ? (
-              <Button onClick={handleNext} className="bg-primary hover:bg-primary/90">
+              <Button
+                onClick={handleNext}
+                className="bg-primary hover:bg-primary/90 transition-all hover:shadow-[0_0_24px_rgba(59,130,246,0.45)]"
+              >
                 Continue <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             ) : (
-              <Button onClick={handleSignup} className="bg-gradient-hero shadow-lg shadow-primary/25" disabled={isLoading}>
+              <Button
+                onClick={handleSignup}
+                className="bg-gradient-hero shadow-lg shadow-primary/25 transition-all hover:shadow-[0_0_28px_rgba(59,130,246,0.55)]"
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating Account...

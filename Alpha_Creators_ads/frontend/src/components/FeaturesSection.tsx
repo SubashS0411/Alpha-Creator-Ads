@@ -1,12 +1,12 @@
-import { 
-  Brain, 
-  Target, 
-  BarChart3, 
-  Shield, 
-  Sparkles, 
+import {
+  Brain,
+  Target,
+  BarChart3,
+  Shield,
+  Sparkles,
   Users,
   Clock,
-  TrendingUp 
+  TrendingUp
 } from "lucide-react";
 
 const features = [
@@ -62,7 +62,7 @@ const features = [
 
 export const FeaturesSection = () => {
   return (
-    <section id="features" className="py-24 bg-muted/30">
+    <section id="features" className="py-36 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold mb-6">
@@ -72,14 +72,14 @@ export const FeaturesSection = () => {
             </span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Our comprehensive platform combines cutting-edge AI technologies to deliver 
+            Our comprehensive platform combines cutting-edge AI technologies to deliver
             personalized advertising experiences that drive real results.
           </p>
         </div>
-        
+
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <div 
+            <div
               key={index}
               className="group bg-gradient-card rounded-xl p-6 shadow-card hover:shadow-elevated transition-all duration-300 border hover:border-primary/20"
             >
