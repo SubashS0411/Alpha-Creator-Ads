@@ -60,12 +60,7 @@ const Dashboard = () => {
               </Button>
             </div>
 
-            {/* Centered Search/Status (Optional Enhancement) */}
-            <div className="hidden md:flex items-center gap-2 px-4 py-1.5 bg-muted/30 rounded-full border border-border/50">
-              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-xs font-medium text-foreground/80">AI System Active</span>
-              <span className="text-xs text-muted-foreground ml-2">Real-time analysis running...</span>
-            </div>
+
 
             <div className="flex items-center gap-4">
               <div className="relative hidden sm:block">

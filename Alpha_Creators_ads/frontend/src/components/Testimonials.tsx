@@ -5,21 +5,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const testimonials = [
     {
         content: "The AI targeting precision is unmatched. We've seen a 40% increase in conversions since switching to AlphaAds.",
-        author: "Sarah Jensen",
-        role: "CMO, TechGrowth",
-        initials: "SJ"
+        author: "Subash s",
+        role: "CEO Amazon",
+        initials: "SS"
     },
     {
         content: "Finally, a platform that understands creative nuance. The generated ad copies are indistinguishable from human-written text.",
-        author: "Michael Chen",
-        role: "Creative Director, Studio X",
-        initials: "MC"
+        author: "Naresh D",
+        role: "CEO Google",
+        initials: "ND"
     },
     {
         content: "The analytics dashboard is a game-changer. Real-time emotion detection helps us pivot our strategy instantly.",
-        author: "Elena Rodriguez",
-        role: "Marketing VP, Global Retail",
-        initials: "ER"
+        author: "Ruthuvarshan",
+        role: "Co founder, NASA",
+        initials: "R"
     }
 ];
 

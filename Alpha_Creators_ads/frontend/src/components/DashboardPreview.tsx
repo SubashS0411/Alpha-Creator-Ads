@@ -6,9 +6,30 @@ import {
   TrendingUp,
   Target,
   Play,
-  Pause,
   Settings
 } from "lucide-react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Defs,
+  LinearGradient,
+  Stop
+} from "recharts";
+
+const data = [
+  { name: "Jan", clickRate: 4.2, conversions: 1200 },
+  { name: "Feb", clickRate: 5.8, conversions: 1900 },
+  { name: "Mar", clickRate: 4.9, conversions: 1500 },
+  { name: "Apr", clickRate: 6.5, conversions: 2400 },
+  { name: "May", clickRate: 7.2, conversions: 2800 },
+  { name: "Jun", clickRate: 8.5, conversions: 3500 },
+  { name: "Jul", clickRate: 8.7, conversions: 3800 },
+];
 
 export const DashboardPreview = () => {
   return (
@@ -28,7 +49,7 @@ export const DashboardPreview = () => {
         </div>
 
         <div className="max-w-6xl mx-auto">
-          <div className="bg-gradient-card rounded-2xl p-8 shadow-elevated border">
+          <div className="bg-gradient-card rounded-2xl p-8 shadow-elevated border border-border/50">
             {/* Dashboard Header */}
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -71,51 +92,102 @@ export const DashboardPreview = () => {
                 <div className="text-sm text-muted-foreground">+15% this month</div>
               </Card>
 
-              <Card className="p-6 bg-gradient-to-br from-accent-orange/10 to-accent-orange/5 border-accent-orange/20">
+              <Card className="p-6 bg-gradient-to-br from-orange-500/10 to-orange-500/5 border-orange-500/20">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 bg-accent-orange/20 rounded-lg">
-                    <TrendingUp className="h-5 w-5 text-accent-orange" />
+                  <div className="p-2 bg-orange-500/20 rounded-lg">
+                    <TrendingUp className="h-5 w-5 text-orange-500" />
                   </div>
-                  <span className="text-sm font-medium text-accent-orange">Conversions</span>
+                  <span className="text-sm font-medium text-orange-500">Conversions</span>
                 </div>
                 <div className="text-2xl font-bold mb-1">2,847</div>
                 <div className="text-sm text-muted-foreground">+31% vs target</div>
               </Card>
 
-              <Card className="p-6 bg-gradient-to-br from-accent-blue/10 to-accent-blue/5 border-accent-blue/20">
+              <Card className="p-6 bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 bg-accent-blue/20 rounded-lg">
-                    <Target className="h-5 w-5 text-accent-blue" />
+                  <div className="p-2 bg-blue-500/20 rounded-lg">
+                    <Target className="h-5 w-5 text-blue-500" />
                   </div>
-                  <span className="text-sm font-medium text-accent-blue">Accuracy</span>
+                  <span className="text-sm font-medium text-blue-500">Accuracy</span>
                 </div>
                 <div className="text-2xl font-bold mb-1">94.2%</div>
                 <div className="text-sm text-muted-foreground">AI targeting score</div>
               </Card>
             </div>
 
-            {/* Chart Placeholder */}
-            <Card className="p-6 bg-background">
+            {/* Recharts Implementation */}
+            <Card className="p-6 bg-background/50 backdrop-blur-sm border-border/50">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold">Performance Trends</h4>
-                <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 bg-primary rounded-full"></div>
+                    <div className="h-3 w-3 bg-[#8b5cf6] rounded-full"></div>
                     <span>Click Rate</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 bg-accent rounded-full"></div>
+                    <div className="h-3 w-3 bg-[#06b6d4] rounded-full"></div>
                     <span>Conversions</span>
                   </div>
                 </div>
               </div>
 
-              <div className="h-64 bg-muted/30 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-muted-foreground">Interactive charts and analytics</p>
-                  <p className="text-sm text-muted-foreground">Real-time data visualization</p>
-                </div>
+              <div className="h-[400px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={data}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient id="colorClickRate" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="colorConversions" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                    <XAxis
+                      dataKey="name"
+                      stroke="#94a3b8"
+                      axisLine={false}
+                      tickLine={false}
+                      dy={10}
+                    />
+                    <YAxis
+                      stroke="#94a3b8"
+                      axisLine={false}
+                      tickLine={false}
+                      dx={-10}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        borderColor: '#334155',
+                        borderRadius: '0.5rem',
+                        color: '#f8fafc'
+                      }}
+                      itemStyle={{ color: '#e2e8f0' }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="clickRate"
+                      stroke="#8b5cf6"
+                      fillOpacity={1}
+                      fill="url(#colorClickRate)"
+                      strokeWidth={3}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="conversions"
+                      stroke="#06b6d4"
+                      fillOpacity={1}
+                      fill="url(#colorConversions)"
+                      strokeWidth={3}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             </Card>
           </div>

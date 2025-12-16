@@ -11,10 +11,10 @@ const PromptGenerator: React.FC = () => {
     }
 
     setIsLoading(true);
-    
+
     try {
       const webhookUrl = `http://localhost:5678/webhook-test/Prompt?title=${encodeURIComponent(title)}`;
-      
+
       const response = await fetch(webhookUrl, {
         method: 'GET',
         mode: 'no-cors', // Avoid CORS issues
@@ -23,7 +23,7 @@ const PromptGenerator: React.FC = () => {
       console.log('Webhook called successfully:', webhookUrl);
       alert('Prompt generation started successfully!');
       setTitle(''); // Clear the input
-      
+
     } catch (error) {
       console.error('Error calling webhook:', error);
       alert('Failed to generate prompt. Please try again.');

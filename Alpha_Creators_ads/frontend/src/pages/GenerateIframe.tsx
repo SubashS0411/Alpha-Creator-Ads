@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 
 const GenerateIframe = () => {
   const [userInput, setUserInput] = useState('');
+  const [productName, setProductName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
@@ -84,13 +85,14 @@ const GenerateIframe = () => {
       const companyName = userProfile.companyName || '';
       const industry = userProfile.industry || '';
 
-      console.log(`Generating URL with: UserInput='${userInput}', Company='${companyName}', Industry='${industry}'`);
+      console.log(`Generating URL with: UserInput='${userInput}', Company='${companyName}', Industry='${industry}', ProductName='${productName}'`);
 
       const opalBaseUrl = 'https://opal.google/?flow=drive:/1lcqFI1I3-EE_V1Th-2hv0qckv-PuPxDG&shared&mode=app';
       const queryParams = new URLSearchParams({
         prompt: userInput,
         companyName: companyName,
         industry: industry,
+        productName: productName,
       });
 
       const opalUrl = `${opalBaseUrl}&${queryParams.toString()}`;
@@ -102,6 +104,7 @@ const GenerateIframe = () => {
       webhookEndpoint.searchParams.set('userInput', userInput);
       webhookEndpoint.searchParams.set('companyName', companyName);
       webhookEndpoint.searchParams.set('industry', industry);
+      webhookEndpoint.searchParams.set('productName', productName);
 
       try {
         const webhookResponse = await fetch(webhookEndpoint.toString(), {
@@ -211,6 +214,24 @@ const GenerateIframe = () => {
                 </CardHeader>
 
                 <CardContent className="space-y-8 px-8 pb-10">
+                  <div className="space-y-3">
+                    <Label htmlFor="productName" className="text-base font-semibold ml-1">
+                      Product Name
+                    </Label>
+                    <div className="relative group">
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                      <Input
+                        id="productName"
+                        type="text"
+                        placeholder="E.g., SuperFast sneakers"
+                        value={productName}
+                        onChange={(e) => setProductName(e.target.value)}
+                        className="relative h-14 text-lg px-4 bg-background border-border/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                        disabled={isLoading}
+                      />
+                    </div>
+                  </div>
+
                   <div className="space-y-3">
                     <Label htmlFor="userInput" className="text-base font-semibold ml-1">
                       What would you like to create?

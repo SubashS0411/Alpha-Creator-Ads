@@ -175,4 +175,14 @@
       linear-gradient(to bottom, hsl(var(--primary)/0.05) 1px, transparent 1px);
     mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
   }
+
+  /* Premium Glass Hover Effect */
+  .hover-glass {
+    @apply transition-all duration-300;
+  }
+  
+  .hover-glass:hover {
+    @apply bg-accent/5 backdrop-blur-sm border-primary/30 shadow-glow -translate-y-1;
+    box-shadow: 0 0 30px -5px hsl(var(--primary)/0.2);
+  }
 }
